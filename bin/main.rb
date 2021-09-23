@@ -1,4 +1,3 @@
-
 require 'libui'
 UI = LibUI
 
@@ -44,24 +43,23 @@ inner = UI.new_vertical_box
 UI.box_set_padded(inner, 1)
 UI.group_set_child(group, inner)
 
-# Button1
-button1 = UI.new_button('Suspend')
-UI.button_on_clicked(button1) do
+# Button Suspend
+button_suspend = UI.new_button('Suspend')
+UI.button_on_clicked(button_suspend) do
   UI.msg_box(MAIN_WINDOW, 'We will sleep ༼ง ◉_◉༽ง', 'i3lock will be executed.')
-  system "sudo pm-suspend"
-  system "i3lock --color=000000"
+  system "i3lock --color=000000 && sudo pm-suspend"
 end
 
-# Button2
-button2 = UI.new_button('Shutdown')
-UI.button_on_clicked(button2) do
+# Button Shutdown
+button_shutdown = UI.new_button('Shutdown')
+UI.button_on_clicked(button_shutdown) do
   UI.msg_box(MAIN_WINDOW, 'Shutting down... ¯\_(ツ)_/¯', '(￣o￣) zzZZzzZZ')
-  system "shutdown -t now"
+  system "sudo shutdown -t now"
 end
 
 
-UI.box_append(inner, button1, 0)
-UI.box_append(inner, button2, 1)
+UI.box_append(inner, button_suspend, 0)
+UI.box_append(inner, button_shutdown, 1)
 
 UI.control_show(MAIN_WINDOW)
 

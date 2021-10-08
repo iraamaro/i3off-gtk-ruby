@@ -1,67 +1,41 @@
-require 'libui'
-UI = LibUI
+require 'glimmer-dsl-libui'
 
-UI.init
+include Glimmer
 
-should_quit = proc do
-  puts 'Bye Bye'
-  UI.control_destroy(MAIN_WINDOW)
-  UI.quit
-  0
-end
+menu('File') {
+  quit_menu_item
+}
 
-# File menu
-menu = UI.new_menu('File')
+menu('Help') {
+  menu_item('Help')
+  
+  about_menu_item
+}
 
-UI.menu_append_quit_item(menu)
-UI.on_should_quit(should_quit)
-
-# Help menu
-help_menu = UI.new_menu('Help')
-UI.menu_append_item(help_menu, 'Help')
-UI.menu_append_about_item(help_menu)
-
-# Main Window
-MAIN_WINDOW = UI.new_window('i3off GUI', 300, 50, 1)
-UI.window_set_margined(MAIN_WINDOW, 1)
-UI.window_on_closing(MAIN_WINDOW, should_quit)
-
-vbox = UI.new_vertical_box
-UI.window_set_child(MAIN_WINDOW, vbox)
-hbox = UI.new_horizontal_box
-UI.box_set_padded(vbox, 1)
-UI.box_set_padded(hbox, 1)
-
-UI.box_append(vbox, hbox, 1)
-
-# Group - Basic Controls
-group = UI.new_group('What do you wish?')
-UI.group_set_margined(group, 1)
-UI.box_append(hbox, group, 1) # OSX bug?
-
-inner = UI.new_vertical_box
-UI.box_set_padded(inner, 1)
-UI.group_set_child(group, inner)
-
-# Button Suspend
-button_suspend = UI.new_button('Suspend')
-UI.button_on_clicked(button_suspend) do
-  UI.msg_box(MAIN_WINDOW, 'We will sleep ༼ง ◉_◉༽ง', 'i3lock will be executed.')
-  system "i3lock --color=000000 && sudo pm-suspend"
-end
-
-# Button Shutdown
-button_shutdown = UI.new_button('Shutdown')
-UI.button_on_clicked(button_shutdown) do
-  UI.msg_box(MAIN_WINDOW, 'Shutting down... ¯\_(ツ)_/¯', '(￣o￣) zzZZzzZZ')
-  system "sudo shutdown -t now"
-end
-
-
-UI.box_append(inner, button_suspend, 0)
-UI.box_append(inner, button_shutdown, 1)
-
-UI.control_show(MAIN_WINDOW)
-
-UI.main
-UI.quit
+window('i3off GUI', 300, 50) {
+  margined true
+  
+  vertical_box {
+    horizontal_box {
+      group('What do you wish?') {
+        vertical_box {
+          button('Suspend') {
+            stretchy false
+            
+            on_clicked do
+              msg_box('We will sleep ༼ง ◉_◉༽ง', 'i3lock will be executed.')
+              system "i3lock --color=000000 && sudo pm-suspend"
+            end
+          }
+          
+          button('Shutdown') {
+            on_clicked do
+              msg_box('Shutting down... ¯\_(ツ)_/¯', '(￣o￣) zzZZzzZZ')
+              system "sudo shutdown -t now"
+            end
+          }
+        }
+      }
+    }
+  }
+}.show
